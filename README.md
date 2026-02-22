@@ -25,4 +25,5 @@ Things that don't work
 Future Plans
  - Augment comparison
  - Optimal build order
+ - Allow custom inputs for bonus stats from augments and stat shards
  - Probably some other stuff I can't remember right now
