@@ -23,4 +23,5 @@ Things that don't work
 
 Future Plans
  - Augment comparison
- - Item build order
+ - Optimal build order
+ - Probably some other stuff I can't remember right now
