@@ -2,8 +2,9 @@
 shitty WIP python script to calculate BiS items to build for sword of blossoming dawn in aram mayhem
 
 Current Features (v1.0)
- - large augment selection list (up to 5)
- - shows optimal full build
+ - Large augment selection list (up to 5)
+ - Shows 'optimal' full build
+ - Dynamic augment and item options
 
 Notes
  - Builds are calculated using level 18 stats averaged across all champions
@@ -11,7 +12,7 @@ Notes
  - Helia assumes you are hitting only 1 champion
  - Helia values are typically lower on champions with low base stats and low damage baked into their kit and vise versa
  - I still need more information on how many augments affect stats and am playing games to try and hit certain augments for testing
- - Still uses items names I used for testing purposes, will update
+ - Still uses items names I used for testing purposes, will update later, but its not a priority
 
 Augments I'm not entirely certain of (help would be awesomesauce if anyone reading this has information on how they function)
  - Symphony of War (seems to use season 11 lethal tempo, conq i can calculate pretty easily)
@@ -20,7 +21,6 @@ Augments I'm not entirely certain of (help would be awesomesauce if anyone readi
 
 Things that don't work
  - Symphony of War is selectable but does not do anything until i figure out how much AS is gives
- - High 
 
 Future Plans
  - Augment comparison
