@@ -30,28 +30,17 @@ augment_dict = {
     'Lightning Strikes' : False,
     'Mad Scientist' : False,
     'Marksmage' : False,
-    'Mind to Matter' : False,
     'Overflow' : False,
-    'Phenominal Evil' : False,
+    'Phenomenal Evil' : False,
     'Protein Shake' : False,
     'Slap Around' : False,
-    'Soul Eater' : False,
     'Symphony of War' : False,
-    'Tank Engine' : False,
     'Tap Dancer' : False,
     'Twice Thrice' : False,
     'Typhoon' : False,
     'Witchful Thinking' : False,
     'Zealot' : False,
 }
-
-# augment counters/options
-slapcounter = 0
-soulcounter = 0
-tankcounter = 0
-hatcounter = 0
-phenominalcounter = 0
-madscibig = False
 
 # [ad, ap, atks, h&s, crit, mana regen,health,mana,armor,mr]
 all_items = {
@@ -88,18 +77,24 @@ all_items = {
     "Overlords" : [30,0,0,0,0,0,550,0,0,0],
 }
 
-# item changes
-actualizer_active = False 
-as_boots = False
-
 # the machine.
 def calculate_optimal():
+    active_augs = []
+    active_augs.append(augment_select1.get())
+    active_augs.append(augment_select2.get())
+    active_augs.append(augment_select3.get())
+    active_augs.append(augment_select4.get())
+    active_augs.append(augment_select5.get())
     for key in augment_dict:
         augment_dict[key] = False
     for aug in active_augs:
-        augment_dict[aug] = True
+        if aug != "Select Augment":
+            augment_dict[aug] = True
     items = ["Moonstone","Runaans","Ardent","Guinsoos","Dawncore","Diadem","Nashors","Phantom","Helia","DuskDawn","Redemption","Staff","Rite","Rabadon","Navori","Fiend","Mandate","Seraph","Actualizer","Riftmaker","Wits","Yuntal","Terminus","Bandlepipes","Banshees","Zhonyas","Dance","Gunblade","Maw"]
-    item_count = 5
+    if asboots_on.get() == True:
+        item_count = 4
+    else:
+        item_count = 5
     item_sets = list(itertools.combinations(items,item_count))
     highest_hps = 0
     for items in item_sets:
@@ -124,21 +119,18 @@ def calculate_optimal():
         bonus_mana = totalstats[7]
         armor_total = totalstats[8]
         mr_total = totalstats[9]
-    # health
+    # health/resists
         if augment_dict['Celestial Body'] == True:
             bonus_health += 1250
-        if augment_dict['Soul Eater'] == True:
-            bonus_health += 20*soulcounter
-        if augment_dict['Mind to Matter'] == True:
-            bonus_health += (bonus_mana+1000)/2
-        if augment_dict['Tank Engine'] == True:
-            hpmod += tankcounter/20
         if augment_dict['Mad Scientist'] == True:
-            if madscibig == True:
+            if madsci_small.get() == True:
                 hpmod += 0.2
         if augment_dict['Goliath'] == True:
             hpmod += 0.35
         bonus_health *= hpmod
+        if augment_dict['Hat on a Hat'] == True:
+            if hat_entry.get().isdigit():
+                mr_total += 4*int(hat_entry.get())
     # ap/ad conversions
         if augment_dict['ADAPt'] or augment_dict['EscAPADe'] == True:
             if augment_dict['ADAPt'] == True:
@@ -146,15 +138,22 @@ def calculate_optimal():
                     ad_total += bonus_health/50
                 if augment_dict['Blunt Force'] == True:
                     admod += 0.2
-                if augment_dict['Mad Scientist'] == True:
-                    if madscibig == True:
-                        apmod += 0.3
                 if augment_dict['Goliath'] == True:
                     apmod += 0.15
                 if augment_dict['Hand of Baron'] == True:
                     apmod += 0.25
+                if augment_dict['Mad Scientist'] == True:
+                    if madsci_small.get() == False:
+                        apmod += 0.3
                 if augment_dict['Slap Around'] == True:
-                    ap_total += 10*slapcounter
+                    if slap_entry.get().isdigit():
+                        ap_total += 10*int(slap_entry.get())
+                if augment_dict['Hat on a Hat'] == True:
+                    if hat_entry.get().isdigit():
+                        ap_total += 8*int(hat_entry.get())
+                if augment_dict['Phenomenal Evil'] == True:
+                    if phenomenal_entry.get().isdigit():
+                        ap_total += int(phenomenal_entry.get())
                 if "Rabadon" in items:
                     apmod += 0.30
                 if "Seraph" in items:
@@ -163,10 +162,6 @@ def calculate_optimal():
                     ap_total += mana_regen/10
                 if "Riftmaker" in items:
                     ap_total += bonus_health/50
-                if augment_dict['Hat on a Hat'] == True:
-                    ap_total += 8*hatcounter
-                if augment_dict['Phenominal Evil'] == True:
-                    ap_total += phenominalcounter
                 if augment_dict['Witchful Thinking'] == True:
                     ap_total += 80
                 ad_total *= admod
@@ -187,19 +182,22 @@ def calculate_optimal():
                     ap_total += mana_regen/10
                 if "Riftmaker" in items:
                     ap_total += bonus_health/50
-                if augment_dict['Mad Scientist'] == True:
-                    if madscibig == True:
-                        admod += 0.3
                 if augment_dict['Goliath'] == True:
                     admod += 0.15
                 if augment_dict['Hand of Baron'] == True:
                     admod += 0.25
+                if augment_dict['Mad Scientist'] == True:
+                    if madsci_small.get() == False:
+                        admod += 0.3
                 if augment_dict['Slap Around'] == True:
-                    ad_total += 6*slapcounter
+                    if slap_entry.get().isdigit():
+                        ad_total += 6*int(slap_entry.get())
                 if augment_dict['Hat on a Hat'] == True:
-                    ap_total += 8*hatcounter
-                if augment_dict['Phenominal Evil'] == True:
-                    ap_total += phenominalcounter
+                    if hat_entry.get().isdigit():
+                        ap_total += 8*int(hat_entry.get())
+                if augment_dict['Phenomenal Evil'] == True:
+                    if phenomenal_entry.get().isdigit():
+                        ap_total += int(phenomenal_entry.get())
                 if augment_dict['Witchful Thinking'] == True:
                     ap_total += 80
                 ap_total *= apmod
@@ -222,7 +220,7 @@ def calculate_optimal():
             if augment_dict['Blunt Force'] == True:
                 admod += 0.2
             if augment_dict['Mad Scientist'] == True:
-                if madscibig == True:
+                if madsci_small.get() == False:
                     if ap_total > ad_total:
                         apmod += 0.3
                     else:
@@ -238,14 +236,17 @@ def calculate_optimal():
                 else:
                     admod += 0.25
             if augment_dict['Slap Around'] == True:
-                if ap_total > ad_total:
-                    ap_total += 10*slapcounter
-                else:
-                    ad_total += 6*slapcounter
+                if slap_entry.get().isdigit():
+                    if ap_total > ad_total:
+                        ap_total += 10*int(slap_entry.get())
+                    else:
+                        ad_total += 6*int(slap_entry.get())
             if augment_dict['Hat on a Hat'] == True:
-                    ap_total += 8*hatcounter
-            if augment_dict['Phenominal Evil'] == True:
-                    ap_total += phenominalcounter
+                if hat_entry.get().isdigit():
+                    ap_total += 8*int(hat_entry.get())
+            if augment_dict['Phenomenal Evil'] == True:
+                if phenomenal_entry.get().isdigit():
+                    ap_total += int(phenomenal_entry.get())
             if augment_dict['Witchful Thinking'] == True:
                     ap_total += 80
             ad_total *= admod
@@ -259,8 +260,7 @@ def calculate_optimal():
             hsp_total += (bonus_mana+1000)/200
         if augment_dict['Empyrean Promise'] == True:
             hsp_total += 15
-    # boots
-        if as_boots == True:
+        if asboots_on.get() == True:
             as_total += 25
         if augment_dict['Critical Healing'] == True:
             crit += 25
@@ -346,7 +346,7 @@ def calculate_optimal():
         if augment_dict['All For You'] == True:
             hps *= 1.3
         if "Actualizer" in items:
-            if actualizer_active == True:
+            if actualizer_on.get() == True:
                 hps *= 1.15 + 0.00005*bonus_mana
         if augment_dict['Back to Basics'] == True:
             hsp_total *= 1.3
@@ -357,15 +357,12 @@ def calculate_optimal():
             highest_hps = hps
             best_items = items
     highest_hps = round(highest_hps,1)
-    highest_hps = "Healing per Second: " + str(highest_hps)
-    items_label.config(text=best_items)
-    hps_label.config(text=highest_hps)
+    build_label_var.set(best_items)
+    hps_label_var.set("Healing per second: " + str(highest_hps))
 
 # tkinter window
 root = tk.Tk()
 root.title("Mathematically Correct Sword of Blossoming Dawn")
-pywinstyles.change_header_color(root, "#1c1c1c")
-root.geometry("1080x720")
 root.resizable(0,0)
 
 # icon data
@@ -380,34 +377,147 @@ iconfile.close()
 root.wm_iconbitmap(tempfile)
 os.remove(tempfile)
 
+pywinstyles.change_header_color(root, "#1c1c1c")
+
 # Augment Selection
-augment_list = ['Select Augment','ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Goliath','Hand of Baron','Hat on a Hat','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Mind to Matter','Overflow','Phenominal Evil','Protein Shake','Slap Around','Soul Eater','Symphony of War','Tank Engine','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Zealot']
+augment_list = ['Select Augment','ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Goliath','Hand of Baron','Hat on a Hat','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Zealot']
 
-active_augs = []
+class options(ttk.LabelFrame):
+    def __init__(self, parent):
+        super().__init__(parent, text="Options", padding=15)
 
-# gets list of all updated augments
-def augment_selector(selected):
-    global active_augs
-    active_augs = [var.get() for var in [augment_select1, augment_select2, augment_select3, augment_select4, augment_select5] if var.get() != 'Select Augment']
+        global actualizer_on
+        actualizer_on = tk.BooleanVar(self, False)
+        global asboots_on
+        asboots_on = tk.BooleanVar(self, False)
+        global madsci_small
+        madsci_small = tk.BooleanVar(self, False)
 
-augment_select1 = customtkinter.CTkOptionMenu(root, values=augment_list,bg_color='#1c1c1c',command=augment_selector)
-augment_select1.pack()
-augment_select2 = customtkinter.CTkOptionMenu(root, values=augment_list,bg_color='#1c1c1c',command=augment_selector)
-augment_select2.pack()
-augment_select3 = customtkinter.CTkOptionMenu(root, values=augment_list,bg_color='#1c1c1c',command=augment_selector)
-augment_select3.pack()
-augment_select4 = customtkinter.CTkOptionMenu(root, values=augment_list,bg_color='#1c1c1c',command=augment_selector)
-augment_select4.pack()
-augment_select5 = customtkinter.CTkOptionMenu(root, values=augment_list,bg_color='#1c1c1c',command=augment_selector)
-augment_select5.pack()
+        self.add_widgets()
 
-optimize = ttk.Button(text='Calculate!', command=calculate_optimal)
-optimize.pack()
+    def add_widgets(self):
 
-items_label = ttk.Label(root, text = '')
-hps_label = ttk.Label(root, text = '')
-items_label.pack()
-hps_label.pack()
+        def madsci_toggle():
+            global madsci_button
+            global madsci_small
+            if madsci_small.get() == True:
+                madsci_button.config(text="Big")
+                madsci_small = tk.BooleanVar(self, False)
+            else:
+                madsci_button.config(text="Small")
+                madsci_small = tk.BooleanVar(self, True)
+
+        self.actualizer_check = ttk.Checkbutton(self, text="Include Actualizer Active?", variable=actualizer_on)
+        self.actualizer_check.grid(row=0, column=0, columnspan=5, pady=(0, 10), sticky="w")
+        
+        self.asboots_check = ttk.Checkbutton(self, text="Attack Speed Boots", variable=asboots_on)
+        self.asboots_check.grid(row=1, column=0, columnspan=5, pady=(5, 10), sticky="w")
+
+        global madsci_button
+        madsci_button = ttk.Checkbutton(self, text="Small", style="Toggle.TButton", command=madsci_toggle, variable=madsci_small, width= 5)
+        madsci_button.grid(row=2, column=0, pady=(5, 10), sticky="nsew")
+
+        self.madsci_label = ttk.Label(self, text="Mad Scientist State")
+        self.madsci_label.grid(row=2, column=1, padx=10, sticky="ew")
+
+        global slap_entry
+        slap_entry = ttk.Entry(self,width=3)
+        slap_entry.insert(0, 0)
+        slap_entry.grid(row=3, column=0, pady=(5, 10), sticky="ew")
+
+        self.slap_label = ttk.Label(self, text="Slap Around Stacks")
+        self.slap_label.grid(row=3, column=1, padx=10, sticky="ew")
+
+        global phenomenal_entry
+        phenomenal_entry = ttk.Entry(self,width=3)
+        phenomenal_entry.insert(0, 0)
+        phenomenal_entry.grid(row=4, column=0, pady=(5, 10), sticky="ew")
+
+        self.phenomenal_label = ttk.Label(self, text="Phenomenal Evil Stacks")
+        self.phenomenal_label.grid(row=4, column=1, padx=10, sticky="ew")
+
+        global hat_entry
+        hat_entry = ttk.Entry(self,width=3)
+        hat_entry.insert(0, 0)
+        hat_entry.grid(row=5, column=0, pady=(5, 10), sticky="ew")
+
+        self.hat_label = ttk.Label(self, text="Hat on a Hat Counter")
+        self.hat_label.grid(row=5, column=1, padx=10, sticky="ew")
+
+        self.hat_label = ttk.Label(self, text="(Count hat items as 2 hats)")
+        self.hat_label.grid(row=6, column=0, columnspan=5, padx=10, sticky="ew")
+
+class augment_box(ttk.LabelFrame):
+    def __init__(self, parent):
+        super().__init__(parent, text="Augment Selection", padding=15)
+
+        self.add_widgets()
+
+    def add_widgets(self):
+
+        global augment_select1
+        augment_select1 = ttk.Combobox(self, state="readonly", values=augment_list)
+        augment_select1.current(0)
+        augment_select1.grid(row=0, column=0, padx=5, pady=(5,10), sticky="ew")
+
+        global augment_select2
+        augment_select2 = ttk.Combobox(self, state="readonly", values=augment_list)
+        augment_select2.current(0)
+        augment_select2.grid(row=1, column=0, padx=5, pady=10, sticky="ew")
+
+        global augment_select3
+        augment_select3 = ttk.Combobox(self, state="readonly", values=augment_list)
+        augment_select3.current(0)
+        augment_select3.grid(row=2, column=0, padx=5, pady=10, sticky="ew")
+
+        global augment_select4
+        augment_select4 = ttk.Combobox(self, state="readonly", values=augment_list)
+        augment_select4.current(0)
+        augment_select4.grid(row=3, column=0, padx=5, pady=10, sticky="ew")
+
+        global augment_select5
+        augment_select5 = ttk.Combobox(self, state="readonly", values=augment_list)
+        augment_select5.current(0)
+        augment_select5.grid(row=4, column=0, padx=5, pady=10, sticky="ew")
+
+        self.separator = ttk.Separator(self)
+        self.separator.grid(row=5, column=0, pady=5, sticky="ew")
+
+        self.button = ttk.Button(self, text="Calculate!", command=calculate_optimal)
+        self.button.grid(row=6, column=0, padx=5, pady=10, sticky="ew")
+
+class itemoutput(ttk.LabelFrame):
+    def __init__(self,parent):
+        super().__init__(parent, text="Item Output", padding=10)
+
+        global build_label_var
+        build_label_var = tk.StringVar()
+
+        global hps_label_var
+        hps_label_var = tk.StringVar()
+
+        self.items_label = ttk.Label(self, textvariable=build_label_var)
+        build_label_var.set("Calculate to see optimal build!")
+        self.items_label.grid(row=0,column=0, sticky= "w", padx=5)
+
+        self.hps_label = ttk.Label(self, textvariable=hps_label_var)
+        hps_label_var.set("Healing per second: ")
+        self.hps_label.grid(row=1,column=0, sticky= "w", padx=5, pady=(0,5))
+
+class App(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, padding=15)
+
+        options(self).grid(row=0, column=0, padx=(0, 10), sticky="nsew")
+        augment_box(self).grid(row=0, column=1, padx=(10, 0), sticky="nsew")
+
+        separator = ttk.Separator(self)
+        separator.grid(row=1, column=0, columnspan=2, pady=(20,11), sticky="ew")
+
+        itemoutput(self).grid(row=2, column=0, columnspan=2, sticky="ew")
 
 sv_ttk.set_theme("dark")
+
+App(root).pack(expand=True, fill="both")
+
 root.mainloop()
