@@ -20,6 +20,7 @@ Augments I'm not entirely certain of (help would be awesomesauce if anyone readi
 
 Things that don't work
  - Symphony of War is selectable but does not do anything until i figure out how much AS is gives
+ - Sometimes app icon doesnt work? tryna figure that out
 
 Future Plans
  - Augment comparison
