@@ -320,14 +320,12 @@ def calculate_optimal():
             as_total += 35 + 0.05*ap_total
             crit += 25 + 0.05*ap_total
         as_total += hsp_total*1.2
-        as_mod = 1
-        if augment_dict['Lightning Strikes'] == True:
-            as_mod += 0.2
-        if augment_dict['Dual Wield'] == True:
-            as_mod += 0.2
-        as_total *= as_mod
         as_total = as_total/100
-        as_total = 0.65 + (as_total + 0.027 * 17 * (0.7025 + 0.0175 * 17)) * 0.65
+        as_total = 0.64 + (as_total + 0.025 * 17 * (0.7025 + 0.0175 * 17)) * 0.65
+        if augment_dict['Lightning Strikes'] == True:
+            as_total *= 1.2
+        if augment_dict['Dual Wield'] == True:
+            as_total *= 1.2
         crit /= 100
         if crit > 1:
             crit = 1
