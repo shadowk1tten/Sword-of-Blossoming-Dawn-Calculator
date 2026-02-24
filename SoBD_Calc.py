@@ -22,6 +22,7 @@ augment_dict = {
     'Empyrean Promise' : False,
     'EscAPADe' : False,
     'First Aid Kit' : False,
+    'Golden Spatula' : False,
     'Goliath' : False,
     'Hand of Baron' : False,
     'Hat on a Hat' : False,
@@ -39,6 +40,7 @@ augment_dict = {
     'Twice Thrice' : False,
     'Typhoon' : False,
     'Witchful Thinking' : False,
+    'Wooglets Witchcap' : False,
     'Zealot' : False,
 }
 
@@ -75,6 +77,8 @@ all_items = {
     "Maw" : [60,0,0,0,0,0,0,0,0,40],
     "Riftmaker" : [0,70,0,0,0,0,350,0,0,0],
     "Overlords" : [30,0,0,0,0,0,550,0,0,0],
+    "Wooglets" : [0,300,0,0,0,0,0,0,50,0],
+    "Spatula" : [90,125,60,0,25.200,350,350,40,40]
 }
 
 # the machine.
@@ -91,10 +95,13 @@ def calculate_optimal():
         if aug != "Select Augment":
             augment_dict[aug] = True
     items = ["Moonstone","Runaans","Ardent","Guinsoos","Dawncore","Diadem","Nashors","Phantom","Helia","DuskDawn","Redemption","Staff","Rite","Rabadon","Navori","Fiend","Mandate","Seraph","Actualizer","Riftmaker","Wits","Yuntal","Terminus","Bandlepipes","Banshees","Zhonyas","Dance","Gunblade","Maw"]
+    item_count = 5
     if asboots_on.get() == True:
-        item_count = 4
-    else:
-        item_count = 5
+        item_count -= 1
+    if augment_dict['Wooglets Witchcap'] == True:
+        item_count -= 1
+    if augment_dict['Golden Spatula'] == True:
+        item_count -= 1
     item_sets = list(itertools.combinations(items,item_count))
     highest_hps = 0
     for items in item_sets:
@@ -104,21 +111,44 @@ def calculate_optimal():
         hpmod = 1
         onhitmult = 1
         items += ("Blossom",)
+        if augment_dict['Wooglets Witchcap'] == True:
+            if "Zhonyas" in items:
+                pass
+            if "Rabadon" in items:
+                pass
+            else:
+                items += ("Wooglets",)
+        if augment_dict['Golden Spatula'] == True:
+            items += ('Spatula',)
         for item in items:
-            for stat in range(10):
+            for stat in range(9):
                 statadd = all_items[item][stat]
                 totalstats[stat] += statadd
     # separate stats
-        ad_total = totalstats[0]
+        ad_bonus = totalstats[0]
+        if ad_entry.get().isdigit():
+            ad_bonus += int(ad_entry.get())
         ap_total = totalstats[1]
+        if ap_entry.get().isdigit():
+            ap_total += int(ap_entry.get())
         as_total = totalstats[2]
+        if as_entry.get().isdigit():
+            as_total += int(as_entry.get())
         hsp_total = totalstats[3]
+        if hsp_entry.get().isdigit():
+            hsp_total += int(hsp_entry.get())
         crit = totalstats[4]
+        if crit_entry.get().isdigit():
+            crit += int(crit_entry.get())
         mana_regen = totalstats[5]
         bonus_health = totalstats[6]
         bonus_mana = totalstats[7]
         armor_total = totalstats[8]
+        if armor_entry.get().isdigit():
+            armor_total += int(armor_entry.get())
         mr_total = totalstats[9]
+        if mr_entry.get().isdigit():
+            mr_total += int(mr_entry.get())
     # health/resists
         if augment_dict['Celestial Body'] == True:
             bonus_health += 1250
@@ -135,7 +165,7 @@ def calculate_optimal():
         if augment_dict['ADAPt'] or augment_dict['EscAPADe'] == True:
             if augment_dict['ADAPt'] == True:
                 if "Overlords" in items:
-                    ad_total += bonus_health/50
+                    ad_bonus += bonus_health/50
                 if augment_dict['Blunt Force'] == True:
                     admod += 0.2
                 if augment_dict['Goliath'] == True:
@@ -156,6 +186,8 @@ def calculate_optimal():
                         ap_total += int(phenomenal_entry.get())
                 if "Rabadon" in items:
                     apmod += 0.30
+                    if augment_dict['Wooglets Witchcap'] == True:
+                        apmod += 0.2
                 if "Seraph" in items:
                     ap_total += bonus_mana/50
                 if "Dawncore" in items:
@@ -164,18 +196,21 @@ def calculate_optimal():
                     ap_total += bonus_health/50
                 if augment_dict['Witchful Thinking'] == True:
                     ap_total += 80
+                ad_total = ad_bonus + 100
                 ad_total *= admod
                 apmod += 0.15
                 ap_total += ad_total/0.6
-                ad_total = 0
+                ad_bonus = 0
                 ap_total *= apmod
             if augment_dict['EscAPADe'] == True:
                 if "Overlords" in items:
-                    ad_total += bonus_health/50
+                    ad_bonus += bonus_health/50
                 if augment_dict['Blunt Force'] == True:
                     admod += 0.2
                 if "Rabadon" in items:
-                    apmod += 0.30
+                    apmod += 0.3
+                    if augment_dict['Wooglets Witchcap'] == True:
+                        apmod += 0.2
                 if "Seraph" in items:
                     ap_total += bonus_mana/50
                 if "Dawncore" in items:
@@ -191,7 +226,7 @@ def calculate_optimal():
                         admod += 0.3
                 if augment_dict['Slap Around'] == True:
                     if slap_entry.get().isdigit():
-                        ad_total += 6*int(slap_entry.get())
+                        ad_bonus += 6*int(slap_entry.get())
                 if augment_dict['Hat on a Hat'] == True:
                     if hat_entry.get().isdigit():
                         ap_total += 8*int(hat_entry.get())
@@ -202,8 +237,9 @@ def calculate_optimal():
                     ap_total += 80
                 ap_total *= apmod
                 admod += 0.15
-                ad_total += ap_total*0.66
+                ad_bonus += ap_total*0.66
                 ap_total = 0
+                ad_total = ad_bonus + 100
                 ad_total *= admod
     # not adapt or escapade
         else:
@@ -214,33 +250,35 @@ def calculate_optimal():
             if "Riftmaker" in items:
                 ap_total += bonus_health/50
             if "Rabadon" in items:
-                    apmod += 0.30
+                    apmod += 0.3
+                    if augment_dict['Wooglets Witchcap'] == True:
+                        apmod += 0.2
             if "Overlords" in items:
-                ad_total += bonus_health/50
+                ad_bonus += bonus_health/50
             if augment_dict['Blunt Force'] == True:
                 admod += 0.2
             if augment_dict['Mad Scientist'] == True:
                 if madsci_small.get() == False:
-                    if ap_total > ad_total:
+                    if ap_total > ad_bonus:
                         apmod += 0.3
                     else:
                         admod +=0.3
             if augment_dict['Goliath'] == True:
-                if ap_total > ad_total:
+                if ap_total > ad_bonus:
                     apmod += 0.15
                 else:
                     admod += 0.15
             if augment_dict['Hand of Baron'] == True:
-                if ap_total > ad_total:
+                if ap_total > ad_bonus:
                     apmod += 0.25
                 else:
                     admod += 0.25
             if augment_dict['Slap Around'] == True:
                 if slap_entry.get().isdigit():
-                    if ap_total > ad_total:
+                    if ap_total > ad_bonus:
                         ap_total += 10*int(slap_entry.get())
                     else:
-                        ad_total += 6*int(slap_entry.get())
+                        ad_bonus += 6*int(slap_entry.get())
             if augment_dict['Hat on a Hat'] == True:
                 if hat_entry.get().isdigit():
                     ap_total += 8*int(hat_entry.get())
@@ -249,6 +287,7 @@ def calculate_optimal():
                     ap_total += int(phenomenal_entry.get())
             if augment_dict['Witchful Thinking'] == True:
                     ap_total += 80
+            ad_total = ad_bonus + 100
             ad_total *= admod
             ap_total *= apmod
     # extra bonuses
@@ -278,28 +317,30 @@ def calculate_optimal():
         if augment_dict['Jeweled Gauntlet'] == True:
             crit += 25 + 0.00045*ap_total
         if augment_dict['Zealot'] == True:
-            as_total += 0.0005*ap_total
-            crit += 0.0005*ap_total
+            as_total += 35 + 0.05*ap_total
+            crit += 25 + 0.05*ap_total
         as_total += hsp_total*1.2
+        as_mod = 1
         if augment_dict['Lightning Strikes'] == True:
-            as_total *= 1.2
+            as_mod += 0.2
+        if augment_dict['Dual Wield'] == True:
+            as_mod += 0.2
+        as_total *= as_mod
         as_total = as_total/100
         as_total = 0.65 + (as_total + 0.027 * 17 * (0.7025 + 0.0175 * 17)) * 0.65
         crit /= 100
         if crit > 1:
             crit = 1
         hsp_total = hsp_total/100 + 1
-        if augment_dict['Dual Wield'] == True:
-            as_total *= 1.2
     # base healing
-        healonhit = (0.1*ad_total + 0.07*ap_total)
+        healonhit = (0.1*ad_bonus + 0.07*ap_total)
         addative_hps = 0
         onhit = 0
         helia_store = 0
         if "Diadem" in items:
             addative_hps = bonus_mana*0.008
         if "Helia" in items:
-            ad_damage = ad_total + 100 + crit * (2-1) * ad_total + 100
+            ad_damage = ad_total + crit * (2-1) * ad_total
             if "Nashors" in items:
                 onhit += ap_total*0.15 + 15
             if "Ardent" in items:
@@ -324,11 +365,11 @@ def calculate_optimal():
             helia_store *= as_total
     # onhit buffs
         if "Runaans" in items:
-            healonhit += 2*(0.1*ad_total + 0.07*ap_total)
+            healonhit += 2*(0.1*ad_bonus + 0.07*ap_total)
         if augment_dict['Typhoon'] == True:
-            healonhit += (0.1*ad_total + 0.07*ap_total)
+            healonhit += (0.1*ad_bonus + 0.07*ap_total)
         if augment_dict['Double Tap'] == True:
-            healonhit += (0.1*ad_total + 0.07*ap_total)*(1 + crit)
+            healonhit += (0.1*ad_bonus + 0.07*ap_total)*(1 + crit)
         if "Guinsoos" in items:
             onhitmult += 0.33
         if augment_dict['Twice Thrice'] == True:
@@ -356,9 +397,14 @@ def calculate_optimal():
         if hps > highest_hps:
             highest_hps = hps
             best_items = items
+            hsp_total -= 1
+            hsp_total *= 100
+            crit *= 100
+            best_stats = "bonus AD: " + str(round(ad_bonus)) + " AP: " + str(round(ap_total)) + " AS: ~" + str(round(as_total, 2)) + " Heal Power: " + str(round(hsp_total)) + " Crit Chance: " + str(round(crit))
     highest_hps = round(highest_hps,1)
     build_label_var.set(best_items)
     hps_label_var.set("Healing per second: " + str(highest_hps))
+    stats_label_var.set("Stats: " + best_stats)
 
 # tkinter window
 root = tk.Tk()
@@ -380,7 +426,7 @@ os.remove(tempfile)
 pywinstyles.change_header_color(root, "#1c1c1c")
 
 # Augment Selection
-augment_list = ['Select Augment','ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Goliath','Hand of Baron','Hat on a Hat','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Zealot']
+augment_list = ['Select Augment','ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Wooglets Witchcap','Zealot']
 
 class options(ttk.LabelFrame):
     def __init__(self, parent):
@@ -486,6 +532,66 @@ class augment_box(ttk.LabelFrame):
         self.button = ttk.Button(self, text="Calculate!", command=calculate_optimal)
         self.button.grid(row=6, column=0, padx=5, pady=10, sticky="ew")
 
+class stat_adder(ttk.LabelFrame):
+    def __init__(self,parent):
+        super().__init__(parent, text="Add Bonus Stats", padding=10)
+
+        global ad_entry
+        ad_entry = ttk.Entry(self,width=3)
+        ad_entry.insert(0, 0)
+        ad_entry.grid(row=0, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.ad_label = ttk.Label(self, text="AD")
+        self.ad_label.grid(row=0, column=1, padx=10, sticky="ew")
+
+        global ap_entry
+        ap_entry = ttk.Entry(self,width=3)
+        ap_entry.insert(0, 0)
+        ap_entry.grid(row=1, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.ap_label = ttk.Label(self, text="AP")
+        self.ap_label.grid(row=1, column=1, padx=10, sticky="ew")
+
+        global as_entry
+        as_entry = ttk.Entry(self,width=3)
+        as_entry.insert(0, 0)
+        as_entry.grid(row=2, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.as_label = ttk.Label(self, text="Attack Speed")
+        self.as_label.grid(row=2, column=1, padx=10, sticky="ew")
+
+        global crit_entry
+        crit_entry = ttk.Entry(self,width=3)
+        crit_entry.insert(0, 0)
+        crit_entry.grid(row=3, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.crit_label = ttk.Label(self, text="Crit Chance")
+        self.crit_label.grid(row=3, column=1, padx=10, sticky="ew")
+
+        global hsp_entry
+        hsp_entry = ttk.Entry(self,width=3)
+        hsp_entry.insert(0, 0)
+        hsp_entry.grid(row=4, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.hsp_label = ttk.Label(self, text="Heal Power")
+        self.hsp_label.grid(row=4, column=1, padx=10, sticky="ew")
+
+        global armor_entry
+        armor_entry = ttk.Entry(self,width=3)
+        armor_entry.insert(0, 0)
+        armor_entry.grid(row=5, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.armor_label = ttk.Label(self, text="Armor")
+        self.armor_label.grid(row=5, column=1, padx=10, sticky="ew")
+
+        global mr_entry
+        mr_entry = ttk.Entry(self,width=3)
+        mr_entry.insert(0, 0)
+        mr_entry.grid(row=6, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
+
+        self.mr_label = ttk.Label(self, text="Magic Resist")
+        self.mr_label.grid(row=6, column=1, padx=10, sticky="ew")
+
 class itemoutput(ttk.LabelFrame):
     def __init__(self,parent):
         super().__init__(parent, text="Item Output", padding=10)
@@ -496,13 +602,20 @@ class itemoutput(ttk.LabelFrame):
         global hps_label_var
         hps_label_var = tk.StringVar()
 
+        global stats_label_var
+        stats_label_var = tk.StringVar()
+
         self.items_label = ttk.Label(self, textvariable=build_label_var)
         build_label_var.set("Calculate to see optimal build!")
-        self.items_label.grid(row=0,column=0, sticky= "w", padx=5)
+        self.items_label.grid(row=0,column=0, sticky= "w", padx=10)
 
         self.hps_label = ttk.Label(self, textvariable=hps_label_var)
         hps_label_var.set("Healing per second: ")
-        self.hps_label.grid(row=1,column=0, sticky= "w", padx=5, pady=(0,5))
+        self.hps_label.grid(row=1,column=0, sticky= "w", padx=10)
+
+        self.stats_label = ttk.Label(self, textvariable=stats_label_var)
+        stats_label_var.set("Stats: ")
+        self.stats_label.grid(row=2,column=0, sticky= "w", padx=10, pady=(0,5))
 
 class App(ttk.Frame):
     def __init__(self, parent):
@@ -512,9 +625,11 @@ class App(ttk.Frame):
         augment_box(self).grid(row=0, column=1, padx=(10, 0), sticky="nsew")
 
         separator = ttk.Separator(self)
-        separator.grid(row=1, column=0, columnspan=2, pady=(20,11), sticky="ew")
+        separator.grid(row=1, column=0, columnspan=3, pady=(20,11), sticky="ew")
 
-        itemoutput(self).grid(row=2, column=0, columnspan=2, sticky="ew")
+        stat_adder(self).grid(row=0, column=2, padx=(10,0), sticky="nsew")
+
+        itemoutput(self).grid(row=2, column=0, columnspan=3, sticky="ew")
 
 sv_ttk.set_theme("dark")
 
