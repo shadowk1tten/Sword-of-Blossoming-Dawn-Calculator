@@ -14,6 +14,7 @@ Notes
  - Helia values are typically lower on champions with low base stats and low damage baked into their kit and vise versa
  - I still need more information on how many augments affect stats and am playing games to try and hit certain augments for testing
  - Still uses items names I used for testing purposes, will update later, but its not a current priority
+ - Most item/augment passives are considered to have full uptime (critical rythm/rageblade stacks for example)
 
 Augments I'm not entirely certain of (help would be awesomesauce if anyone reading this has information on how they function)
  - Symphony of War (seems to use season 11 lethal tempo, conq i can calculate pretty easily)
