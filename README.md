@@ -27,4 +27,5 @@ Future Plans
  - Augment comparison
  - Optimal build order
  - Add automatic calculating of hat on a hat items
+ - item icons
  - Probably some other stuff I can't remember right now
