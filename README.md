@@ -28,4 +28,5 @@ Future Plans
  - Optimal build order
  - Add automatic calculating of hat on a hat items
  - item icons
+ - weighting for ap vs ad build (fight heavy lobbies ad heals more and farm focused lobbies ap heals more due to how helia works)
  - Probably some other stuff I can't remember right now
