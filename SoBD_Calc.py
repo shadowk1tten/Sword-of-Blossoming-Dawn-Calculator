@@ -2,7 +2,6 @@ import itertools
 import tkinter as tk
 from tkinter import ttk
 import sv_ttk
-import customtkinter
 import pywinstyles
 import base64
 import os
@@ -61,8 +60,6 @@ all_items = {
     "Staff" : [0,80,0,10,0,125,0,0,0,0],
     "Rite" : [0,50,0,0,45,0,0,0,0,0],
     "Rabadon" : [0,130,0,0,0,0,0,0,0,0],
-    "Navori" : [0,40,0,0,25,0,0,0,0,0],
-    "Fiend" : [0,45,0,0,25,0,0,0,0,0],
     "Mandate" : [0,60,0,0,0,125,0,0,0,0],
     "Seraph" : [0,70,0,0,0,0,0,1000,0,0],
     "Actualizer" : [0,90,0,0,0,0,0,900,0,0],
@@ -94,7 +91,7 @@ def calculate_optimal():
     for aug in active_augs:
         if aug != "Select Augment":
             augment_dict[aug] = True
-    items = ["Moonstone","Runaans","Ardent","Guinsoos","Dawncore","Diadem","Nashors","Phantom","Helia","DuskDawn","Redemption","Staff","Rite","Rabadon","Navori","Fiend","Mandate","Seraph","Actualizer","Riftmaker","Wits","Yuntal","Terminus","Bandlepipes","Banshees","Zhonyas","Dance","Gunblade","Maw"]
+    items = ["Moonstone","Runaans","Ardent","Guinsoos","Dawncore","Diadem","Nashors","Phantom","Helia","DuskDawn","Redemption","Staff","Rite","Rabadon","Mandate","Seraph","Actualizer","Riftmaker","Wits","Yuntal","Terminus","Bandlepipes","Banshees","Zhonyas","Dance","Gunblade","Maw"]
     item_count = 5
     if asboots_on.get() == True:
         item_count -= 1
@@ -368,6 +365,8 @@ def calculate_optimal():
             healonhit += (0.1*ad_bonus + 0.07*ap_total)
         if augment_dict['Double Tap'] == True:
             healonhit += (0.1*ad_bonus + 0.07*ap_total)*(1 + crit)
+        if augment_dict['Dual Wield'] == True:
+            healonhit += (0.1*ad_bonus + 0.07*ap_total)
         if "Guinsoos" in items:
             onhitmult += 0.33
         if augment_dict['Twice Thrice'] == True:
@@ -423,9 +422,9 @@ os.remove(tempfile)
 
 pywinstyles.change_header_color(root, "#1c1c1c")
 
-# Augment Selection
-augment_list = ['Select Augment','ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Wooglets Witchcap','Zealot']
+augment_list = ['ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Wooglets Witchcap','Zealot']
 
+# Options/Modifiers
 class options(ttk.LabelFrame):
     def __init__(self, parent):
         super().__init__(parent, text="Options", padding=15)
@@ -451,85 +450,273 @@ class options(ttk.LabelFrame):
                 madsci_button.config(text="Small")
                 madsci_small = tk.BooleanVar(self, True)
 
-        self.actualizer_check = ttk.Checkbutton(self, text="Include Actualizer Active?", variable=actualizer_on)
-        self.actualizer_check.grid(row=0, column=0, columnspan=5, pady=(0, 10), sticky="w")
+        actualizer_check = ttk.Checkbutton(self, text="Include Actualizer Active?", variable=actualizer_on)
+        actualizer_check.grid(row=0, column=0, columnspan=5, pady=(0, 10), sticky="w")
         
-        self.asboots_check = ttk.Checkbutton(self, text="Attack Speed Boots", variable=asboots_on)
-        self.asboots_check.grid(row=1, column=0, columnspan=5, pady=(5, 10), sticky="w")
+        asboots_check = ttk.Checkbutton(self, text="Attack Speed Boots", variable=asboots_on)
+        asboots_check.grid(row=1, column=0, columnspan=5, pady=(5, 10), sticky="w")
 
         global madsci_button
         madsci_button = ttk.Checkbutton(self, text="Small", style="Toggle.TButton", command=madsci_toggle, variable=madsci_small, width= 5)
         madsci_button.grid(row=2, column=0, pady=(5, 10), sticky="nsew")
 
-        self.madsci_label = ttk.Label(self, text="Mad Scientist State")
-        self.madsci_label.grid(row=2, column=1, padx=10, sticky="ew")
+        madsci_label = ttk.Label(self, text="Mad Scientist State")
+        madsci_label.grid(row=2, column=1, padx=10, sticky="ew")
 
         global slap_entry
         slap_entry = ttk.Entry(self,width=3)
         slap_entry.insert(0, 0)
         slap_entry.grid(row=3, column=0, pady=(5, 10), sticky="ew")
 
-        self.slap_label = ttk.Label(self, text="Slap Around Stacks")
-        self.slap_label.grid(row=3, column=1, padx=10, sticky="ew")
+        slap_label = ttk.Label(self, text="Slap Around Stacks")
+        slap_label.grid(row=3, column=1, padx=10, sticky="ew")
 
         global phenomenal_entry
         phenomenal_entry = ttk.Entry(self,width=3)
         phenomenal_entry.insert(0, 0)
         phenomenal_entry.grid(row=4, column=0, pady=(5, 10), sticky="ew")
 
-        self.phenomenal_label = ttk.Label(self, text="Phenomenal Evil Stacks")
-        self.phenomenal_label.grid(row=4, column=1, padx=10, sticky="ew")
+        phenomenal_label = ttk.Label(self, text="Phenomenal Evil Stacks")
+        phenomenal_label.grid(row=4, column=1, padx=10, sticky="ew")
 
         global hat_entry
         hat_entry = ttk.Entry(self,width=3)
         hat_entry.insert(0, 0)
         hat_entry.grid(row=5, column=0, pady=(5, 10), sticky="ew")
 
-        self.hat_label = ttk.Label(self, text="Hat on a Hat Counter")
-        self.hat_label.grid(row=5, column=1, padx=10, sticky="ew")
+        hat_label = ttk.Label(self, text="Hat on a Hat Counter")
+        hat_label.grid(row=5, column=1, padx=10, sticky="ew")
 
-        self.hat_label = ttk.Label(self, text="(Count hat items as 2 hats)")
-        self.hat_label.grid(row=6, column=0, columnspan=5, padx=10, sticky="ew")
+        hat_label = ttk.Label(self, text="(Count hat items as 2 hats)")
+        hat_label.grid(row=6, column=0, columnspan=5, padx=10, sticky="ew")
 
+# Augment Selection
 class augment_box(ttk.LabelFrame):
     def __init__(self, parent):
         super().__init__(parent, text="Augment Selection", padding=15)
 
         self.add_widgets()
-
+    
     def add_widgets(self):
 
+        updatelist1 = []
+        updatelist2 = []
+        updatelist3 = []
+        updatelist4 = []
+        updatelist5 = []
+
+        def show_dropdown1(a):
+            if augment_select1.get() == "Select Augment":
+                augment_select1.delete(0, tk.END)
+                for i in augment_list:
+                    augbox1.insert(tk.END, i)
+            augbox1.place(x=5,y=35,width=180)
+            augbox1.tkraise()
+            if augbox1.get(0) != 'Select Augment':
+                augbox1.insert(0, 'Select Augment')
+
+        def show_dropdown2(a):
+            if augment_select2.get() == "Select Augment":
+                augment_select2.delete(0, tk.END)
+                for i in augment_list:
+                    augbox2.insert(tk.END, i)
+            augbox2.place(x=5,y=82,width=180)
+            augbox2.tkraise()
+            if augbox2.get(0) != 'Select Augment':
+                augbox2.insert(0, 'Select Augment')
+
+        def show_dropdown3(a):
+            if augment_select3.get() == "Select Augment":
+                augment_select3.delete(0, tk.END)
+                for i in augment_list:
+                    augbox3.insert(tk.END, i)
+            augbox3.place(x=5,y=129,width=180)
+            augbox3.tkraise()
+            if augbox3.get(0) != 'Select Augment':
+                augbox3.insert(0, 'Select Augment')
+
+        def show_dropdown4(a):
+            if augment_select4.get() == "Select Augment":
+                augment_select4.delete(0, tk.END)
+                for i in augment_list:
+                    augbox4.insert(tk.END, i)
+            augbox4.place(x=5,y=176,width=180,height=150)
+            augbox4.tkraise()
+            if augbox4.get(0) != 'Select Augment':
+                augbox4.insert(0, 'Select Augment')
+
+        def show_dropdown5(a):
+            if augment_select5.get() == "Select Augment":
+                augment_select5.delete(0, tk.END)
+                for i in augment_list:
+                    augbox5.insert(tk.END, i)
+            augbox5.place(x=5,y=223,width=180,height=100)
+            augbox5.tkraise()
+            if augbox5.get(0) != 'Select Augment':
+                augbox5.insert(0, 'Select Augment')
+
+        def hide_dropdown1(a):
+            augment_select1.delete(0, tk.END)
+            augment_select1.insert(0, augbox1.get(augbox1.curselection()))
+            augbox1.place_forget()
+
+        def hide_dropdown2(a):
+            augment_select2.delete(0, tk.END)
+            augment_select2.insert(0, augbox2.get(augbox2.curselection()))
+            augbox2.place_forget()
+
+        def hide_dropdown3(a):
+            augment_select3.delete(0, tk.END)
+            augment_select3.insert(0, augbox3.get(augbox3.curselection()))
+            augbox3.place_forget()
+
+        def hide_dropdown4(a):
+            augment_select4.delete(0, tk.END)
+            augment_select4.insert(0, augbox4.get(augbox4.curselection()))
+            augbox4.place_forget()
+
+        def hide_dropdown5(a):
+            augment_select5.delete(0, tk.END)
+            augment_select5.insert(0, augbox5.get(augbox5.curselection()))
+            augbox5.place_forget()
+
+        def list_update1(a):
+            if entry1.get() != '':
+                updatelist1 = []
+                for i in range(0,len(augment_list)):
+                    if entry1.get().lower() in augment_list[i].lower():
+                        updatelist1.append(augment_list[i])
+                augbox1.delete(0,tk.END)
+                for i in updatelist1:
+                    augbox1.insert(tk.END, i)
+                if augbox1.get(0) != 'Select Augment':
+                    augbox1.insert(0, 'Select Augment')
+            else:
+                augbox1.delete(0,tk.END)
+                for i in augment_list:
+                    augbox1.insert(tk.END, i)
+        
+        def list_update2(a):
+            if entry2.get() != '':
+                updatelist2 = []
+                for i in range(0,len(augment_list)):
+                    if entry2.get().lower() in augment_list[i].lower():
+                        updatelist2.append(augment_list[i])
+                augbox2.delete(0,tk.END)
+                for i in updatelist2:
+                    augbox2.insert(tk.END, i)
+                if augbox2.get(0) != 'Select Augment':
+                    augbox2.insert(0, 'Select Augment')
+            else:
+                augbox2.delete(0,tk.END)
+                for i in augment_list:
+                    augbox2.insert(tk.END, i)
+        
+        def list_update3(a):
+            if entry3.get() != '':
+                updatelist3 = []
+                for i in range(0,len(augment_list)):
+                    if entry3.get().lower() in augment_list[i].lower():
+                        updatelist3.append(augment_list[i])
+                augbox3.delete(0,tk.END)
+                for i in updatelist3:
+                    augbox3.insert(tk.END, i)
+                if augbox3.get(0) != 'Select Augment':
+                    augbox3.insert(0, 'Select Augment')
+            else:
+                augbox3.delete(0,tk.END)
+                for i in augment_list:
+                    augbox3.insert(tk.END, i)
+        
+        def list_update4(a):
+            if entry4.get() != '':
+                updatelist4 = []
+                for i in range(0,len(augment_list)):
+                    if entry4.get().lower() in augment_list[i].lower():
+                        updatelist4.append(augment_list[i])
+                augbox4.delete(0,tk.END)
+                for i in updatelist4:
+                    augbox4.insert(tk.END, i)
+                if augbox4.get(0) != 'Select Augment':
+                    augbox4.insert(0, 'Select Augment')
+            else:
+                augbox4.delete(0,tk.END)
+                for i in augment_list:
+                    augbox4.insert(tk.END, i)
+        
+        def list_update5(a):
+            if entry5.get() != '':
+                updatelist5 = []
+                for i in range(0,len(augment_list)):
+                    if entry5.get().lower() in augment_list[i].lower():
+                        updatelist5.append(augment_list[i])
+                augbox5.delete(0,tk.END)
+                for i in updatelist5:
+                    augbox5.insert(tk.END, i)
+                if augbox5.get(0) != 'Select Augment':
+                    augbox5.insert(0, 'Select Augment')
+            else:
+                augbox5.delete(0,tk.END)
+                for i in augment_list:
+                    augbox5.insert(tk.END, i)
+
         global augment_select1
-        augment_select1 = ttk.Combobox(self, state="readonly", values=augment_list)
-        augment_select1.current(0)
-        augment_select1.grid(row=0, column=0, padx=5, pady=(5,10), sticky="ew")
+        entry1 = tk.StringVar(self,"Select Augment")
+        augment_select1 = ttk.Entry(self, textvariable=entry1)
+        augment_select1.grid(row=0, column=0, padx=5, pady=(5,0), sticky="ew")
+        augment_select1.bind('<KeyRelease>',list_update1)
+        augment_select1.bind('<FocusIn>', show_dropdown1)
+
+        augbox1 = tk.Listbox(self, selectmode=tk.SINGLE)
+        augbox1.bind('<FocusIn>', hide_dropdown1)
 
         global augment_select2
-        augment_select2 = ttk.Combobox(self, state="readonly", values=augment_list)
-        augment_select2.current(0)
-        augment_select2.grid(row=1, column=0, padx=5, pady=10, sticky="ew")
+        entry2 = tk.StringVar(self,"Select Augment")
+        augment_select2 = ttk.Entry(self, textvariable=entry2)
+        augment_select2.grid(row=1, column=0, padx=5, pady=(15,0), sticky="ew")
+        augment_select2.bind('<KeyRelease>',list_update2)
+        augment_select2.bind('<FocusIn>', show_dropdown2)
+
+        augbox2 = tk.Listbox(self, selectmode=tk.SINGLE)
+        augbox2.bind('<FocusIn>', hide_dropdown2)
 
         global augment_select3
-        augment_select3 = ttk.Combobox(self, state="readonly", values=augment_list)
-        augment_select3.current(0)
-        augment_select3.grid(row=2, column=0, padx=5, pady=10, sticky="ew")
+        entry3 = tk.StringVar(self,"Select Augment")
+        augment_select3 = ttk.Entry(self, textvariable=entry3)
+        augment_select3.grid(row=2, column=0, padx=5, pady=(15,0), sticky="ew")
+        augment_select3.bind('<KeyRelease>',list_update3)
+        augment_select3.bind('<FocusIn>', show_dropdown3)
+
+        augbox3 = tk.Listbox(self, selectmode=tk.SINGLE)
+        augbox3.bind('<FocusIn>', hide_dropdown3)
 
         global augment_select4
-        augment_select4 = ttk.Combobox(self, state="readonly", values=augment_list)
-        augment_select4.current(0)
-        augment_select4.grid(row=3, column=0, padx=5, pady=10, sticky="ew")
+        entry4 = tk.StringVar(self,"Select Augment")
+        augment_select4 = ttk.Entry(self, textvariable=entry4)
+        augment_select4.grid(row=3, column=0, padx=5, pady=(15,0), sticky="ew")
+        augment_select4.bind('<KeyRelease>',list_update4)
+        augment_select4.bind('<FocusIn>', show_dropdown4)
+
+        augbox4 = tk.Listbox(self, selectmode=tk.SINGLE)
+        augbox4.bind('<FocusIn>', hide_dropdown4)
 
         global augment_select5
-        augment_select5 = ttk.Combobox(self, state="readonly", values=augment_list)
-        augment_select5.current(0)
-        augment_select5.grid(row=4, column=0, padx=5, pady=10, sticky="ew")
+        entry5 = tk.StringVar(self,"Select Augment")
+        augment_select5 = ttk.Entry(self, textvariable=entry5)
+        augment_select5.grid(row=4, column=0, padx=5, pady=(15,10), sticky="ew")
+        augment_select5.bind('<KeyRelease>',list_update5)
+        augment_select5.bind('<FocusIn>', show_dropdown5)
 
-        self.separator = ttk.Separator(self)
-        self.separator.grid(row=5, column=0, pady=5, sticky="ew")
+        augbox5 = tk.Listbox(self, selectmode=tk.SINGLE)
+        augbox5.bind('<FocusIn>', hide_dropdown5)
 
-        self.button = ttk.Button(self, text="Calculate!", command=calculate_optimal)
-        self.button.grid(row=6, column=0, padx=5, pady=10, sticky="ew")
+        separator = ttk.Separator(self)
+        separator.grid(row=5, column=0, pady=15, sticky="ew")
 
+        button = ttk.Button(self, text="Calculate!", command=calculate_optimal)
+        button.grid(row=6, column=0, padx=5, pady=10, sticky="ew")
+
+# Bonus Stats
 class stat_adder(ttk.LabelFrame):
     def __init__(self,parent):
         super().__init__(parent, text="Add Bonus Stats", padding=10)
@@ -539,57 +726,58 @@ class stat_adder(ttk.LabelFrame):
         ad_entry.insert(0, 0)
         ad_entry.grid(row=0, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.ad_label = ttk.Label(self, text="AD")
-        self.ad_label.grid(row=0, column=1, padx=10, sticky="ew")
+        ad_label = ttk.Label(self, text="AD")
+        ad_label.grid(row=0, column=1, padx=10, sticky="ew")
 
         global ap_entry
         ap_entry = ttk.Entry(self,width=3)
         ap_entry.insert(0, 0)
         ap_entry.grid(row=1, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.ap_label = ttk.Label(self, text="AP")
-        self.ap_label.grid(row=1, column=1, padx=10, sticky="ew")
+        ap_label = ttk.Label(self, text="AP")
+        ap_label.grid(row=1, column=1, padx=10, sticky="ew")
 
         global as_entry
         as_entry = ttk.Entry(self,width=3)
         as_entry.insert(0, 0)
         as_entry.grid(row=2, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.as_label = ttk.Label(self, text="Attack Speed")
-        self.as_label.grid(row=2, column=1, padx=10, sticky="ew")
+        as_label = ttk.Label(self, text="Attack Speed")
+        as_label.grid(row=2, column=1, padx=10, sticky="ew")
 
         global crit_entry
         crit_entry = ttk.Entry(self,width=3)
         crit_entry.insert(0, 0)
         crit_entry.grid(row=3, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.crit_label = ttk.Label(self, text="Crit Chance")
-        self.crit_label.grid(row=3, column=1, padx=10, sticky="ew")
+        crit_label = ttk.Label(self, text="Crit Chance")
+        crit_label.grid(row=3, column=1, padx=10, sticky="ew")
 
         global hsp_entry
         hsp_entry = ttk.Entry(self,width=3)
         hsp_entry.insert(0, 0)
         hsp_entry.grid(row=4, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.hsp_label = ttk.Label(self, text="Heal Power")
-        self.hsp_label.grid(row=4, column=1, padx=10, sticky="ew")
+        hsp_label = ttk.Label(self, text="Heal Power")
+        hsp_label.grid(row=4, column=1, padx=10, sticky="ew")
 
         global armor_entry
         armor_entry = ttk.Entry(self,width=3)
         armor_entry.insert(0, 0)
         armor_entry.grid(row=5, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.armor_label = ttk.Label(self, text="Armor")
-        self.armor_label.grid(row=5, column=1, padx=10, sticky="ew")
+        armor_label = ttk.Label(self, text="Armor")
+        armor_label.grid(row=5, column=1, padx=10, sticky="ew")
 
         global mr_entry
         mr_entry = ttk.Entry(self,width=3)
         mr_entry.insert(0, 0)
         mr_entry.grid(row=6, column=0, padx=(5,0), pady=(5, 10), sticky="ew")
 
-        self.mr_label = ttk.Label(self, text="Magic Resist")
-        self.mr_label.grid(row=6, column=1, padx=10, sticky="ew")
+        mr_label = ttk.Label(self, text="Magic Resist")
+        mr_label.grid(row=6, column=1, padx=10, sticky="ew")
 
+# Data Output
 class itemoutput(ttk.LabelFrame):
     def __init__(self,parent):
         super().__init__(parent, text="Item Output", padding=10)
@@ -603,18 +791,19 @@ class itemoutput(ttk.LabelFrame):
         global stats_label_var
         stats_label_var = tk.StringVar()
 
-        self.items_label = ttk.Label(self, textvariable=build_label_var)
+        items_label = ttk.Label(self, textvariable=build_label_var)
         build_label_var.set("Calculate to see optimal build!")
-        self.items_label.grid(row=0,column=0, sticky= "w", padx=10)
+        items_label.grid(row=0,column=0, sticky= "w", padx=10)
 
-        self.hps_label = ttk.Label(self, textvariable=hps_label_var)
+        hps_label = ttk.Label(self, textvariable=hps_label_var)
         hps_label_var.set("Healing per second: ")
-        self.hps_label.grid(row=1,column=0, sticky= "w", padx=10)
+        hps_label.grid(row=1,column=0, sticky= "w", padx=10)
 
-        self.stats_label = ttk.Label(self, textvariable=stats_label_var)
+        stats_label = ttk.Label(self, textvariable=stats_label_var)
         stats_label_var.set("Stats: ")
-        self.stats_label.grid(row=2,column=0, sticky= "w", padx=10, pady=(0,5))
+        stats_label.grid(row=2,column=0, sticky= "w", padx=10, pady=(0,5))
 
+# Gui Assembly
 class App(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent, padding=15)
