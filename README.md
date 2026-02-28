@@ -29,4 +29,5 @@ Future Plans
  - Add automatic calculating of hat on a hat items
  - item icons
  - weighting for ap vs ad build (fight heavy lobbies ad heals more and farm focused lobbies ap heals more due to how helia works)
+ - lots of backend cleanup (my code is shit and i cut a lot of corners, so it kinda runs slowish and is annoying to make changes)
  - Probably some other stuff I can't remember right now
