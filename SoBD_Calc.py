@@ -57,26 +57,14 @@ all_items = {
     'Helia' : [0,35,0,0,0,125,200,0,0,0],
     'Ardent' : [0,45,25,10,0,125,0,0,0,0],
     'Dawncore' : [0,45,0,16,0,100,0,0,0,0],
-    'DuskDawn' : [0,70,25,0,0,0,350,0,0,0],
     'Guinsoos' : [30,30,57,0,0,0,0,0,0,0],
-    'Redemption' : [0,30,0,10,0,100,0,0,0,0],
     'Staff' : [0,80,0,10,0,125,0,0,0,0],
     'Rite' : [0,50,0,0,45,0,0,0,0,0],
     'Rabadon' : [0,130,0,0,0,0,0,0,0,0],
-    'Mandate' : [0,60,0,0,0,125,0,0,0,0],
-    'Seraph' : [0,70,0,0,0,0,0,1000,0,0],
-    'Actualizer' : [0,90,0,0,0,0,0,900,0,0],
-    'Wits' : [0,0,50,0,0,0,0,0,0,45],
     'Yuntal' : [50,0,70,0,25,0,0,0,0,0],
     'Terminus' : [30,0,35,0,0,0,0,0,24,24],
-    'Bandlepipes' : [0,0,20,0,0,0,200,0,20,20],
-    'Banshees' : [0,100,0,0,0,0,0,0,0,40],
     'Zhonyas' : [0,105,0,0,0,0,0,0,50,0],
     'Dance' : [60,0,0,0,0,0,0,0,50,0],
-    'Gunblade' : [40,80,0,0,0,0,0,0,0,0],
-    'Maw' : [60,0,0,0,0,0,0,0,0,40],
-    'Riftmaker' : [0,70,0,0,0,0,350,0,0,0],
-    'Overlords' : [30,0,0,0,0,0,550,0,0,0],
     'Wooglets' : [0,300,0,0,0,0,0,0,50,0],
     'Spatula' : [90,125,60,0,25.200,350,350,40,40],
     'Bork' : [40,0,25,0,0,0,0,0,0,0]
@@ -95,7 +83,7 @@ def calculate_optimal():
     for aug in active_augs:
         if aug != 'Select Augment':
             augment_dict[aug] = True
-    items = ['Moonstone','Runaans','Ardent','Guinsoos','Dawncore','Diadem','Nashors','Phantom','Helia','DuskDawn','Redemption','Staff','Rite','Rabadon','Mandate','Seraph','Actualizer','Riftmaker','Wits','Yuntal','Terminus','Bandlepipes','Banshees','Zhonyas','Dance','Gunblade','Maw','Bork']
+    items = ['Moonstone','Runaans','Ardent','Guinsoos','Dawncore','Diadem','Nashors','Phantom','Helia','Staff','Rite','Rabadon','Yuntal','Terminus','Zhonyas','Dance','Bork']
     item_count = 5
     if asboots_on.get() == True:
         item_count -= 1
@@ -165,8 +153,6 @@ def calculate_optimal():
 # ap/ad conversions
         if augment_dict['ADAPt'] or augment_dict['EscAPADe'] == True:
             if augment_dict['ADAPt'] == True:
-                if 'Overlords' in items:
-                    ad_bonus += bonus_health/50
                 if augment_dict['Blunt Force'] == True:
                     admod += 0.2
                 if augment_dict['Goliath'] == True:
@@ -189,12 +175,8 @@ def calculate_optimal():
                     apmod += 0.30
                     if augment_dict['Wooglets Witchcap'] == True:
                         apmod += 0.2
-                if 'Seraph' in items:
-                    ap_total += bonus_mana/50
                 if 'Dawncore' in items:
                     ap_total += mana_regen/10
-                if 'Riftmaker' in items:
-                    ap_total += bonus_health/50
                 if augment_dict['Witchful Thinking'] == True:
                     ap_total += 80
                 ad_total = ad_bonus + 100
@@ -204,20 +186,14 @@ def calculate_optimal():
                 ad_bonus = 0
                 ap_total *= apmod
             if augment_dict['EscAPADe'] == True:
-                if 'Overlords' in items:
-                    ad_bonus += bonus_health/50
                 if augment_dict['Blunt Force'] == True:
                     admod += 0.2
                 if 'Rabadon' in items:
                     apmod += 0.3
                     if augment_dict['Wooglets Witchcap'] == True:
                         apmod += 0.2
-                if 'Seraph' in items:
-                    ap_total += bonus_mana/50
                 if 'Dawncore' in items:
                     ap_total += mana_regen/10
-                if 'Riftmaker' in items:
-                    ap_total += bonus_health/50
                 if augment_dict['Goliath'] == True:
                     admod += 0.15
                 if augment_dict['Hand of Baron'] == True:
@@ -246,16 +222,10 @@ def calculate_optimal():
         else:
             if 'Dawncore' in items:
                 ap_total += mana_regen/10
-            if 'Seraph' in items:
-                ap_total += bonus_mana/50
-            if 'Riftmaker' in items:
-                ap_total += bonus_health/50
             if 'Rabadon' in items:
                     apmod += 0.3
                     if augment_dict['Wooglets Witchcap'] == True:
                         apmod += 0.2
-            if 'Overlords' in items:
-                ad_bonus += bonus_health/50
             if augment_dict['Blunt Force'] == True:
                 admod += 0.2
             if augment_dict['Mad Scientist'] == True:
@@ -349,8 +319,6 @@ def calculate_optimal():
                 onhit += 20
             if 'Terminus' in items:
                 onhit += 30
-            if 'Wits' in items:
-                onhit += 45
             if augment_dict['Lightning Strikes'] == True:
                 if as_total >= 1.75:
                     onhit += 40
@@ -392,9 +360,6 @@ def calculate_optimal():
             hps *= 1.10 + 0.00005*(bonus_mana+1000)
         if augment_dict['All For You'] == True:
             hps *= 1.3
-        if 'Actualizer' in items:
-            if actualizer_on.get() == True:
-                hps *= 1.15 + 0.00005*bonus_mana
         if augment_dict['Back to Basics'] == True:
             hsp_total *= 1.3
         hps *= hsp_total
@@ -436,8 +401,6 @@ class options(ttk.LabelFrame):
     def __init__(self, parent):
         super().__init__(parent, text='Options', padding=15)
 
-        global actualizer_on
-        actualizer_on = tk.BooleanVar(self, True)
         global asboots_on
         asboots_on = tk.BooleanVar(self, False)
         global madsci_small
@@ -462,11 +425,6 @@ class options(ttk.LabelFrame):
         
         def adeffupdate(a):
             adefflabel.config(text='AD Effectiveness Modifier: ' + str(int(round(adeffslider.get(), 0))) + '%')
-
-        actualizer_check = ttk.Checkbutton(self, text='Include Actualizer Active', variable=actualizer_on)
-        actualizer_check.grid(row=0, column=0, columnspan=5, pady=(0, 10), sticky='w')
-
-        ToolTip(actualizer_check,msg='Considers actualizer to always be active')
         
         asboots_check = ttk.Checkbutton(self, text='Use Attack Speed Boots', variable=asboots_on)
         asboots_check.grid(row=1, column=0, columnspan=5, pady=5, sticky='w')
