@@ -1,11 +1,12 @@
 # Sword-of-Blossoming-Dawn-Calculator
 shitty WIP python script to calculate BiS items to build for sword of blossoming dawn in aram mayhem
 
-Current Features (v1.2)
+Current Features (v1.2.3)
  - Large augment selection list (up to 5)
  - Shows 'optimal' full build
  - Dynamic augment and item options
  - Bonus stat inputting
+ - Hover over elements in the options tab to get more information on how they function
 
 Notes
  - Builds are calculated using level 18 stats averaged across all champions
@@ -18,7 +19,7 @@ Notes
  - Building more AD causes you to heal more off of enemies while AP heals more from waves (due to how helia works)
 
 Augments I'm not entirely certain of (help would be awesomesauce if anyone reading this has information on how they function)
- - Symphony of War (seems to use season 11 lethal tempo, conq i can calculate pretty easily)
+ - Symphony of War (seems to use season 11 lethal tempo, conq i can calculate pretty easily) I HAVENT SEEN IT IN WEEKS SO I CANT TEST HOW MUCH ATTACK SPEED IT GIVES
 
 Things that don't work
  - Symphony of War is selectable but does not do anything until i figure out how much AS is gives
@@ -28,6 +29,5 @@ Future Plans
  - Optimal build order
  - Add automatic calculating of hat on a hat items
  - item icons
- - weighting for ap vs ad build (fight heavy lobbies ad heals more and farm focused lobbies ap heals more due to how helia works)
- - lots of backend cleanup (my code is shit and i cut a lot of corners, so it kinda runs slowish and is annoying to make changes)
+ - lots of backend cleanup (my code is shit and i cut a lot of corners to make things work, so it kinda runs slowish and its annoying to make changes)
  - Probably some other stuff I can't remember right now
