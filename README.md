@@ -1,7 +1,7 @@
 # Sword-of-Blossoming-Dawn-Calculator
 shitty WIP python script to calculate BiS items to build for sword of blossoming dawn in aram mayhem
 
-Current Features (v1.2.3)
+Current Features (v1.2.4)
  - Large augment selection list (up to 5)
  - Shows 'optimal' full build
  - Dynamic augment and item options
