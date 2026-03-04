@@ -41,6 +41,7 @@ augment_dict = {
     'Tap Dancer' : False,
     'Twice Thrice' : False,
     'Typhoon' : False,
+    'Upgrade Sword of Blossoming Dawn' : False,
     'Witchful Thinking' : False,
     'Wooglets Witchcap' : False,
     'Zealot' : False,
@@ -140,7 +141,7 @@ def calculate_optimal():
             mr_total += int(mr_entry.get())
 # health/resists
         if augment_dict['Celestial Body'] == True:
-            bonus_health += 1250
+            bonus_health += 1500
         if augment_dict['Mad Scientist'] == True:
             if madsci_small.get() == True:
                 hpmod += 0.2
@@ -183,7 +184,7 @@ def calculate_optimal():
                 ad_total *= admod
                 apmod += 0.15
                 ap_total += ad_total/0.6
-                ad_bonus = 0
+                ad_total = 100
                 ap_total *= apmod
             if augment_dict['EscAPADe'] == True:
                 if augment_dict['Blunt Force'] == True:
@@ -264,6 +265,8 @@ def calculate_optimal():
 # extra bonuses
         if augment_dict['Tap Dancer'] == True:
             as_total += 35
+        if augment_dict['Upgrade Sword of Blossoming Dawn'] == True:
+            as_total += 100
         if 'Dawncore' in items:
             hsp_total += mana_regen/50
         if 'Diadem' in items:
@@ -310,7 +313,7 @@ def calculate_optimal():
             addative_hps += bonus_mana*0.008
 # Helia
         if 'Helia' in items:
-            ad_damage = (ad_total*(round(adeffslider.get(),0)/100)) + crit * (2-1) * (ad_total*(round(adeffslider.get(),0)/100))
+            ad_damage = (ad_total*(round(adeff_slider.get(),0)/100)) + crit * (2-1) * (ad_total*(round(adeff_slider.get(),0)/100))
             if 'Nashors' in items:
                 onhit += ap_total*0.15 + 15
             if 'Bork' in items:
@@ -344,6 +347,8 @@ def calculate_optimal():
             healonhit += (0.1*ad_bonus + 0.07*ap_total)*(1 + crit)
         if augment_dict['Dual Wield'] == True:
             healonhit += (0.1*ad_bonus + 0.07*ap_total)
+        if augment_dict['Upgrade Sword of Blossoming Dawn'] == True:
+            healonhit += (0.1*ad_bonus + 0.07*ap_total)
         if 'Guinsoos' in items:
             onhitmult += 0.33
         if augment_dict['Twice Thrice'] == True:
@@ -368,9 +373,6 @@ def calculate_optimal():
         if hps > highest_hps:
             highest_hps = hps
             best_items = items
-            hsp_total -= 1
-            hsp_total *= 100
-            crit *= 100
     highest_hps = round(highest_hps,1)
     build_label_var.set(best_items)
     hps_label_var.set('Healing per second: ' + str(highest_hps))
@@ -394,7 +396,7 @@ os.remove(tempfile)
 
 pywinstyles.change_header_color(root, '#1c1c1c')
 
-augment_list = ['ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Heavy Hitter','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Witchful Thinking','Wooglets Witchcap','Zealot']
+augment_list = ['ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Heavy Hitter','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Upgrade Sword of Blossoming Dawn','Witchful Thinking','Wooglets Witchcap','Zealot']
 
 # Options/Modifiers
 class options(ttk.LabelFrame):
@@ -419,35 +421,44 @@ class options(ttk.LabelFrame):
             else:
                 madsci_button.config(text='Small')
                 madsci_small = tk.BooleanVar(self, True)
-        
+
         def borkupdate(a):
-            borklabel.config(text='Target max Health: ' + str(int(round(borkslider.get(),-1))))
-        
+            bork_label.config(text='Target max Health: ' + str(int(round(borkslider.get(),-1))))
+
         def adeffupdate(a):
-            adefflabel.config(text='AD Effectiveness Modifier: ' + str(int(round(adeffslider.get(), 0))) + '%')
-        
+            adeff_label.config(text='AD Effectiveness Modifier: ' + str(int(round(adeff_slider.get(), 0))) + '%')
+
         asboots_check = ttk.Checkbutton(self, text='Use Attack Speed Boots', variable=asboots_on)
         asboots_check.grid(row=1, column=0, columnspan=5, pady=5, sticky='w')
 
-        ToolTip(asboots_check, delay=0.25, msg='Slots in boots instead of a 6th item. Note that a 6th item instead of boots can increase healing by 30% - 50%')
+        as_tip = ttk.Label(self, text='(?)')
+        as_tip.grid(row=1,column=1, sticky='e')
 
-        borklabel = ttk.Label(self, text='Target max Health: 3000')
-        borklabel.grid(row=2, column=0, columnspan=5, pady=5, sticky='w')
+        ToolTip(as_tip, delay=0.25, msg='Slots in boots instead of a 6th item. Note that a 6th item instead of boots can increase healing by 30% - 50%')
 
-        ToolTip(borklabel, delay=0.25, msg='Take average max HP between enemy frontlines to calculate bork effectiveness')
-        
+        bork_label = ttk.Label(self, text='Target max Health: 3000')
+        bork_label.grid(row=2, column=0, columnspan=5, pady=5, sticky='w')
+
+        bork_tip = ttk.Label(self, text='(?)')
+        bork_tip.grid(row=2, column=1, sticky='e')
+
+        ToolTip(bork_tip, delay=0.25, msg='Take average max HP between enemy frontlines to calculate bork effectiveness')
+
         global borkslider
         borkslider = ttk.Scale(self, from_=2000, to=10000, orient='horizontal',command=borkupdate, value=3000)
         borkslider.grid(row=3, column=0, columnspan=5, pady=(5,10), sticky='ew')
 
-        adefflabel = ttk.Label(self, text='AD Effectiveness Modifier: 70%')
-        adefflabel.grid(row=4, column=0, columnspan=5, pady=5, sticky='w')
+        adeff_label = ttk.Label(self, text='AD Effectiveness Modifier: 70%')
+        adeff_label.grid(row=4, column=0, columnspan=5, pady=5, sticky='w')
 
-        ToolTip(adefflabel, msg='Changes how much bonus AD affects Helia, increase vs more tanks, decrease if you are farming waves more than hitting enemies', delay=0.25)
+        adeff_tip = ttk.Label(self,text='(?)')
+        adeff_tip.grid(row=4, column=1, sticky='e')
 
-        global adeffslider
-        adeffslider = ttk.Scale(self, from_=0, to=100, orient='horizontal', command=adeffupdate, value=70)
-        adeffslider.grid(row=5,column=0,columnspan=5, pady=(5,10), sticky='ew')
+        ToolTip(adeff_tip, msg='Changes how much bonus AD affects Helia, increase vs more tanks, decrease if you are farming waves more than hitting enemies', delay=0.25)
+
+        global adeff_slider
+        adeff_slider = ttk.Scale(self, from_=0, to=100, orient='horizontal', command=adeffupdate, value=70)
+        adeff_slider.grid(row=5,column=0,columnspan=5, pady=(5,10), sticky='ew')
 
         global madsci_button
         madsci_button = ttk.Checkbutton(self, text='Small', style='Toggle.TButton', command=madsci_toggle, variable=madsci_small, width= 5)
@@ -489,7 +500,7 @@ class augment_box(ttk.LabelFrame):
         super().__init__(parent, text='Augment Selection', padding=15)
 
         self.add_widgets()
-    
+
     def add_widgets(self):
 
         updatelist1 = []
@@ -588,7 +599,7 @@ class augment_box(ttk.LabelFrame):
                 augbox1.delete(0,tk.END)
                 for i in augment_list:
                     augbox1.insert(tk.END, i)
-        
+
         def list_update2(a):
             if entry2.get() != '':
                 updatelist2 = []
@@ -604,7 +615,7 @@ class augment_box(ttk.LabelFrame):
                 augbox2.delete(0,tk.END)
                 for i in augment_list:
                     augbox2.insert(tk.END, i)
-        
+
         def list_update3(a):
             if entry3.get() != '':
                 updatelist3 = []
@@ -620,7 +631,7 @@ class augment_box(ttk.LabelFrame):
                 augbox3.delete(0,tk.END)
                 for i in augment_list:
                     augbox3.insert(tk.END, i)
-        
+
         def list_update4(a):
             if entry4.get() != '':
                 updatelist4 = []
@@ -636,7 +647,7 @@ class augment_box(ttk.LabelFrame):
                 augbox4.delete(0,tk.END)
                 for i in augment_list:
                     augbox4.insert(tk.END, i)
-        
+
         def list_update5(a):
             if entry5.get() != '':
                 updatelist5 = []
@@ -790,7 +801,7 @@ class itemoutput(ttk.LabelFrame):
 
         hps_label = ttk.Label(self, textvariable=hps_label_var)
         hps_label_var.set('Healing per second: ')
-        hps_label.grid(row=1,column=0, sticky= 'w', padx=10, pady=5)
+        hps_label.grid(row=1,column=0, sticky= 'w', padx=10, pady=(5,10))
 
 # Gui Assembly
 class App(ttk.Frame):
