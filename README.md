@@ -28,5 +28,6 @@ Future Plans
  - Optimal build order
  - Add automatic calculating of hat on a hat items
  - item icons
+ - optional inputting of champion stats
  - lots of backend cleanup (my code is shit and i cut a lot of corners to make things work, so it kinda runs slowish and its annoying to make changes)
  - Probably some other stuff I can't remember right now
