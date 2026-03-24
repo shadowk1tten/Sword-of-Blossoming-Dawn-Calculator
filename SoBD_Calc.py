@@ -299,7 +299,7 @@ def calculate_optimal():
         if augment_dict['Lightning Strikes'] == True:
             as_total *= 1.2
         if augment_dict['Dual Wield'] == True:
-            as_total *= 1.2
+            as_total *= 1.1
         crit /= 100
         if crit > 1:
             crit = 1
@@ -329,10 +329,10 @@ def calculate_optimal():
                 onhit += 30
                 onhit *= 1.333
             if augment_dict['Marksmage'] == True:
-                onhit += ap_total*0.75
+                onhit += (ap_total*0.75)*adeff_slider.get()
             if augment_dict['Heavy Hitter'] == True:
                 onhit += (bonus_health + 2300)*0.035
-            helia_store = (ad_damage + onhit)*0.35
+            helia_store = (ad_damage + (onhit*round(adeff_slider.get())))*0.35
             if augment_dict['Celestial Body'] == True:
                 helia_store *= 0.9
             if helia_store > 250:
@@ -348,7 +348,7 @@ def calculate_optimal():
         if augment_dict['Dual Wield'] == True:
             healonhit += (0.1*ad_bonus + 0.07*ap_total)
         if augment_dict['Upgrade Sword of Blossoming Dawn'] == True:
-            healonhit += (0.1*ad_bonus + 0.07*ap_total)
+            healonhit += ((0.1*ad_bonus + 0.07*ap_total)*1.5)*round(adeff_slider.get())
         if 'Guinsoos' in items:
             onhitmult += 0.33
         if augment_dict['Twice Thrice'] == True:
@@ -426,7 +426,7 @@ class options(ttk.LabelFrame):
             bork_label.config(text='Target max Health: ' + str(int(round(borkslider.get(),-1))))
 
         def adeffupdate(a):
-            adeff_label.config(text='AD Effectiveness Modifier: ' + str(int(round(adeff_slider.get(), 0))) + '%')
+            adeff_label.config(text='Combat Coefficient: ' + str(int(round(adeff_slider.get(), 0))) + '%')
 
         asboots_check = ttk.Checkbutton(self, text='Use Attack Speed Boots', variable=asboots_on)
         asboots_check.grid(row=1, column=0, columnspan=5, pady=5, sticky='w')
@@ -448,13 +448,13 @@ class options(ttk.LabelFrame):
         borkslider = ttk.Scale(self, from_=2000, to=10000, orient='horizontal',command=borkupdate, value=3000)
         borkslider.grid(row=3, column=0, columnspan=5, pady=(5,10), sticky='ew')
 
-        adeff_label = ttk.Label(self, text='AD Effectiveness Modifier: 70%')
+        adeff_label = ttk.Label(self, text='Combat Coefficient: 70%')
         adeff_label.grid(row=4, column=0, columnspan=5, pady=5, sticky='w')
 
         adeff_tip = ttk.Label(self,text='(?)')
         adeff_tip.grid(row=4, column=1, sticky='e')
 
-        ToolTip(adeff_tip, msg='Changes how much bonus AD affects Helia, increase vs more tanks, decrease if you are farming waves more than hitting enemies', delay=0.25)
+        ToolTip(adeff_tip, msg='Due to how Helia works, higher damage is better for in-combat healing, but worse for healing on waves. Increase value when fighting is more prominent, decrease when mainly farming waves', delay=0.25)
 
         global adeff_slider
         adeff_slider = ttk.Scale(self, from_=0, to=100, orient='horizontal', command=adeffupdate, value=70)
