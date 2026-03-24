@@ -1,7 +1,7 @@
 # Sword-of-Blossoming-Dawn-Calculator
 shitty WIP python script to calculate BiS items to build for sword of blossoming dawn in aram mayhem
 
-Current Features (v1.2.4)
+Current Features (v1.2.6)
  - Large augment selection list
  - Shows 'optimal' full build
  - Dynamic augment and item options
@@ -19,6 +19,7 @@ Notes
 
 Augments I'm not entirely certain of (help would be awesomesauce if anyone reading this has information on how they function)
  - Symphony of War (seems to use season 11 lethal tempo, conq i can calculate pretty easily) I HAVENT SEEN IT IN WEEKS SO I CANT TEST HOW MUCH ATTACK SPEED IT GIVES
+ - Does Upgrade Sword of Blossoming Dawn change the damage of on-hits, or just the base damage of the auto
 
 Things that don't work
  - Symphony of War is selectable but does not do anything until i figure out how much AS is gives
