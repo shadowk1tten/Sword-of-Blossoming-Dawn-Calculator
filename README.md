@@ -1,9 +1,9 @@
 # Sword-of-Blossoming-Dawn-Calculator
 shitty WIP python script to calculate BiS items to build for sword of blossoming dawn in aram mayhem
 
-Current Features (v1.2.6)
+Current Features (v1.3.0)
  - Large augment selection list
- - Shows 'optimal' full build
+ - Shows 'optimal' full build + path
  - Dynamic augment and item options
  - Bonus stat inputting
 
@@ -25,10 +25,8 @@ Things that don't work
  - Symphony of War is selectable but does not do anything until i figure out how much AS is gives
 
 Future Plans
- - Augment comparison
- - Optimal build order
- - Add automatic calculating of hat on a hat items
+ - Faster augment comparison
  - item icons
- - optional inputting of champion stats
- - lots of backend cleanup (my code is shit and i cut a lot of corners to make things work, so it kinda runs slowish and its annoying to make changes)
+ - Optional inputting of champion stats
+ - Lots of backend cleanup (my code is shit and i cut a lot of corners to make things work, so it kinda runs slowish and its annoying to make changes)
  - Probably some other stuff I can't remember right now
