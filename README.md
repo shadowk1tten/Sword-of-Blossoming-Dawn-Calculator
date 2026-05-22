@@ -19,6 +19,7 @@ Notes
 
 Future Plans
  - Item icons
+ - Reset button
  - Optional inputting of champion stats
  - Lots of backend cleanup (my code is shit and i cut a lot of corners to make things work, so it kinda runs slowish and its annoying to make changes)
  - Augment comparison
