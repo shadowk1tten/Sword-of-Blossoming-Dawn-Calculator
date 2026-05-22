@@ -2,7 +2,7 @@ import itertools
 import tkinter as tk
 from tkinter import ttk
 import ttkwidgets
-from tktooltip import ToolTip
+from TkToolTip import ToolTip
 import sv_ttk
 import pywinstyles
 import base64
@@ -15,14 +15,20 @@ augment_dict = {
     'Back to Basics' : False,
     'Blunt Force' : False,
     'Celestial Body' : False,
+    'Cerberus' : False,
     'Critical Healing' : False,
     'Critical Rythm' : False,
     'Deft' : False,
     'Double Tap' : False,
     'Dual Wield' : False,
     'Empyrean Promise' : False,
+    'ReEnergize' : False,
     'EscAPADe' : False,
+    'Firebrand' : False,
     'First Aid Kit' : False,
+    'Gash' : False,
+    'Giant Slayer' : False,
+    'Glass Cannon' : False,
     'Golden Spatula' : False,
     'Goliath' : False,
     'Hand of Baron' : False,
@@ -70,6 +76,7 @@ all_items = {
     'Spatula' : [90,125,60,0,25.200,350,350,40,40],
     'Bork' : [40,0,25,0,0,0,0,0,0,0],
     'Jaksho' : [0,0,0,0,0,0,350,0,45,45],
+    'Statikk' : [45,45,30,0,0,0,0,0,0,0],
     'Placeholder' : [-1000,-1000,0,0,0,0,0,0,0,0]
 }
 
@@ -161,6 +168,8 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
                 if augment_dict['Mad Scientist'] == True:
                     if madsci_small.get() == False:
                         apmod += 0.3
+                if augment_dict['Symphony of War'] == True:
+                    ad_total += 66
                 if augment_dict['Slap Around'] == True:
                     if slap_entry.get().isdigit():
                         ap_total += 10*int(slap_entry.get())
@@ -198,6 +207,8 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
                 if augment_dict['Mad Scientist'] == True:
                     if madsci_small.get() == False:
                         admod += 0.3
+                if augment_dict['Symphony of War'] == True:
+                    ad_bonus += 40
                 if augment_dict['Slap Around'] == True:
                     if slap_entry.get().isdigit():
                         ad_bonus += 6*int(slap_entry.get())
@@ -238,6 +249,11 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
                     apmod += 0.25
                 else:
                     admod += 0.25
+            if augment_dict['Symphony of War'] == True:
+                if ap_total > ad_bonus:
+                    ap_total += 66
+                else:
+                    ad_total += 40
             if augment_dict['Slap Around'] == True:
                 if slap_entry.get().isdigit():
                     if ap_total > ad_bonus:
@@ -265,6 +281,10 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
             hsp_total += 15
         if asboots_on.get() == True:
             as_total += 25
+        if augment_dict['Symphony of War'] == True:
+            as_total += 72
+        if augment_dict['Gash'] == True:
+            as_total += 50
         if augment_dict['Critical Healing'] == True:
             crit += 25
         if augment_dict['Protein Shake'] == True:
@@ -295,13 +315,14 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
             crit = 1
         hsp_total = hsp_total/100 + 1
 # Healing
-        healonhit = (0.1*ad_bonus + 0.07*ap_total)
+        baseheal = 0.1*ad_bonus + 0.07*ap_total
+        healonhit = baseheal
         addative_hps = 0
         onhit = 0
         helia_store = 0
         if 'Diadem' in items:
             addative_hps += bonus_mana*0.008
-# Helia
+# Helia Damage
         if 'Helia' in items:
             onhitdamagemult = 1
             ad_damage = (ad_total*combat_coef) + crit * (ad_total*combat_coef)
@@ -313,43 +334,68 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
                 onhit += 20
             if 'Terminus' in items:
                 onhit += 30
+            if augment_dict['Gash'] == True:
+                onhit += 20 + 0.2*armor_total
             if augment_dict['Lightning Strikes'] == True:
                 if as_total >= 1.75:
                     onhit += 40
-            onhit += bonusonhit_entry.get() * combat_coef
-            if augment_dict['Typhoon'] == True:
-                onhit += ad_total*combat_coef*0.3
-                onhitdamagemult += 0.7 * combat_coef
-                if onhitdamagemult > 1.5:
-                    onhitdamagemult = 1.5
+            if augment_dict['Twice Thrice'] == True:
+                onhitdamagemult += 0.5
             if 'Guinsoos' in items:
                 onhit += 30
                 onhitdamagemult += 0.333
             if 'Runaans' in items:
-                if combat_coef == 1:
-                    onhitdamagemult += (adeff_slider.get()/100 - 1)
+                if combat_coef >= 1:
+                    onhitdamagemult *= (adeff_slider.get()/100)
+            if augment_dict['Typhoon'] == True:
+                onhit += ad_total*combat_coef*0.3
+                onhitdamagemult += 0.7
+                if onhitdamagemult > 1.5:
+                    onhitdamagemult = 1.5
+            if augment_dict['Dual Wield'] == True:
+                onhitdamagemult += 0.4
             onhit *= onhitdamagemult
+            onhit += int(bonusonhit_entry.get())
             if augment_dict['Marksmage'] == True:
-                onhit += (ap_total*0.75)*combat_coef
+                onhit += (ap_total*0.75)
             if augment_dict['Heavy Hitter'] == True:
                 onhit += (bonus_health + 2300)*0.035
-            helia_store = (ad_damage + (onhit * combat_coef))*0.35
-            if augment_dict['Celestial Body'] == True:
-                helia_store *= 0.9
+            onhit *= combat_coef
+            helia_store = (ad_damage + (onhit))*0.3
+            if augment_dict['Firebrand'] == True:
+                helia_store += int(round(borkslider.get(), 1))*0.012*as_total
+            if augment_dict['Glass Cannon'] == True:
+                helia_store *= 1.15
+            if augment_dict['Giant Slayer'] == True:
+                if augment_dict['Goliath'] == False:
+                    helia_store *= 1.15
+                else:
+                    helia_store *= 1.1
+            if augment_dict['Cerberus'] == True:
+                helia_store *= 1.15
             if helia_store > 250:
                 helia_store = 250
             helia_store *= as_total
-# onhit buffs
-        if 'Runaans' in items:
-            healonhit += 2*(0.1*ad_bonus + 0.07*ap_total)
-        if augment_dict['Typhoon'] == True:
-            healonhit += (0.1*ad_bonus + 0.07*ap_total)*combat_coef
-        if augment_dict['Double Tap'] == True:
-            healonhit += (0.1*ad_bonus + 0.07*ap_total)*(1 + crit)
-        if augment_dict['Dual Wield'] == True:
-            healonhit += (0.1*ad_bonus + 0.07*ap_total)
+# onhit healing
         if augment_dict['Upgrade Sword of Blossoming Dawn'] == True:
             healonhit += ((0.1*ad_bonus + 0.07*ap_total)*1.5)*combat_coef
+        if 'Runaans' in items:
+            healonhit += 2*baseheal
+        if 'Statikk' in items:
+            if augment_dict['ReEnergize'] == True:
+                healonhit += 4*baseheal
+            else:
+                healonhit += baseheal
+        if augment_dict['Typhoon'] == True:
+            if combat_coef > 1:
+                combat_coef = 1
+            healonhit += baseheal*combat_coef
+            if augment_dict['Upgrade Sword of Blossoming Dawn'] == True:
+                healonhit += ((0.1*ad_bonus + 0.07*ap_total)*1.5)*combat_coef
+        if augment_dict['Double Tap'] == True:
+            healonhit += baseheal*(1 + crit)
+        if augment_dict['Dual Wield'] == True:
+            healonhit += (0.1*ad_bonus + 0.07*ap_total)
         if 'Guinsoos' in items:
             onhitmult += 0.33
         if augment_dict['Twice Thrice'] == True:
@@ -408,7 +454,7 @@ def calculate_optimal():
     for aug in active_augs:
         if aug != 'Select Augment':
             augment_dict[aug] = True
-    items = ['Moonstone','Runaans','Ardent','Dawncore','Diadem','Nashors','Phantom','Helia','Staff','Rite','Rabadon','Yuntal','Terminus','Zhonyas','Dance','Bork','Guinsoos','Jaksho']
+    items = ['Moonstone','Runaans','Ardent','Dawncore','Diadem','Nashors','Phantom','Helia','Staff','Rite','Rabadon','Yuntal','Terminus','Zhonyas','Dance','Bork','Guinsoos','Jaksho','Statikk']
     item_count = 5
     bonus_items = ('Blossom',)
     if asboots_on.get() == True:
@@ -446,7 +492,7 @@ os.remove(tempfile)
 
 pywinstyles.change_header_color(root, '#1c1c1c')
 
-augment_list = ['ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','EscAPADe','First Aid Kit','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Heavy Hitter','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Upgrade Sword of Blossoming Dawn','Witchful Thinking','Wooglets Witchcap','Zealot']
+augment_list = ['ADAPt','All For You','Back to Basics','Blunt Force','Celestial Body','Cerberus','Critical Healing','Critical Rythm','Deft','Double Tap','Dual Wield','Empyrean Promise','ReEnergize','EscAPADe','Firebrand','First Aid Kit','Gash','Giant Slayer','Glass Cannon','Golden Spatula','Goliath','Hand of Baron','Hat on a Hat','Heavy Hitter','Im a Baby Kitty Where is Mama','Jeweled Gauntlet','Lightning Strikes','Mad Scientist','Marksmage','Overflow','Phenomenal Evil','Protein Shake','Slap Around','Symphony of War','Tap Dancer','Twice Thrice','Typhoon','Upgrade Sword of Blossoming Dawn','Witchful Thinking','Wooglets Witchcap','Zealot']
 
 # Options/Modifiers
 class options(ttk.LabelFrame):
