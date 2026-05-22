@@ -385,7 +385,7 @@ def stat_calculator(item_sets, bonus_items, combat_coef):
             if augment_dict['ReEnergize'] == True:
                 healonhit += 4*baseheal
             else:
-                healonhit += baseheal
+                healonhit += 0.7*baseheal
         if augment_dict['Typhoon'] == True:
             if combat_coef > 1:
                 combat_coef = 1
